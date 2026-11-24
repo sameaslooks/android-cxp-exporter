@@ -122,7 +122,7 @@ The APK is written to `dist/cxp-exporter-<version>.apk`.
 
 ### Release workflow
 
-The **Release APK** GitHub Actions workflow (started manually) builds the version set in the project, runs the tests, and publishes a GitHub release `vX.Y.Z` with the signed APK. The **CI** workflow runs on every push and pull request and builds the debug APK and runs the unit tests.
+The **Release APK** GitHub Actions workflow (started manually) builds the version set in the project, runs the tests, and publishes a GitHub release `vX.Y.Z` with the signed APK.
 
 Required repository secrets (Settings → Secrets and variables → Actions):
 
