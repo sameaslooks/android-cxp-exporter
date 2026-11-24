@@ -1,3 +1,4 @@
+# Builds the signed release APK and publishes a GitHub release. Started manually from the Actions tab.
 name: Release APK
 
 on:
