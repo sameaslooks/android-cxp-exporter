@@ -20,12 +20,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -48,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,6 +60,7 @@ import io.github.cxpexporter.core.cxf.Record
 import io.github.cxpexporter.core.cxf.RecordKind
 import io.github.cxpexporter.data.PasswordSaver
 import io.github.cxpexporter.data.SaveCancelledException
+import io.github.cxpexporter.data.UpdateInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.launch
@@ -86,11 +90,13 @@ fun RecordsScreen(
     state: UiState,
     vm: MainViewModel,
     activity: Activity,
+    availableUpdate: UpdateInfo?,
     contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     val resolver = context.contentResolver
     val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     var exportMenu by remember { mutableStateOf(false) }
     var showMasterPassword by remember { mutableStateOf(false) }
@@ -149,6 +155,13 @@ fun RecordsScreen(
 
     val result = state.result
     Column(Modifier.padding(contentPadding).fillMaxSize()) {
+        if (availableUpdate != null) {
+            UpdateBanner(
+                version = availableUpdate.version,
+                onOpenRelease = { uriHandler.openUri(availableUpdate.url) },
+                onDismiss = { vm.dismissUpdate() },
+            )
+        }
         if (state.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
 
         if (result == null) {
@@ -254,6 +267,31 @@ fun RecordsScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UpdateBanner(version: String, onOpenRelease: () -> Unit, onDismiss: () -> Unit) {
+    val bannerText = stringResource(R.string.update_banner_text, version)
+    val openLabel = stringResource(R.string.update_open_release)
+    val dismissLabel = stringResource(R.string.update_dismiss)
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Row(
+            Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(bannerText, style = MaterialTheme.typography.bodyLarge)
+                TextButton(onClick = onOpenRelease) { Text(openLabel) }
+            }
+            IconButton(onClick = onDismiss) {
+                Icon(Icons.Filled.Close, contentDescription = dismissLabel)
             }
         }
     }

@@ -19,7 +19,8 @@ Please include:
 In scope:
 
 - the CXP Exporter app code, including CXF parsing and the KDBX, CXF JSON and CSV export files it writes;
-- the build and release workflows in this repository.
+- the build and release workflows in this repository;
+- the daily update check against `api.github.com`, including how the app handles the response.
 
 Out of scope (report these to the respective project):
 

@@ -1,10 +1,13 @@
 package io.github.cxpexporter.ui
 
 import android.app.Activity
+import android.app.Application
 import android.content.ContentResolver
+import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.cxpexporter.R
 import io.github.cxpexporter.core.cxf.CxfParser
 import io.github.cxpexporter.core.cxf.ImportResult
 import io.github.cxpexporter.core.cxf.Record
@@ -12,6 +15,9 @@ import io.github.cxpexporter.core.cxf.RecordKind
 import io.github.cxpexporter.core.export.CsvExporter
 import io.github.cxpexporter.core.export.KdbxExporter
 import io.github.cxpexporter.data.CxpImporter
+import io.github.cxpexporter.data.Settings
+import io.github.cxpexporter.data.UpdateChecker
+import io.github.cxpexporter.data.UpdateInfo
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -53,10 +59,81 @@ data class UiState(
 private fun searchFields(r: Record): List<String> =
     listOf(r.title.orEmpty(), r.username.orEmpty(), r.rpId.orEmpty()) + r.urls
 
-class MainViewModel : ViewModel() {
+private const val DAY_MS = 24L * 60 * 60 * 1000
+
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val settings = Settings(application)
 
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
+
+    private val _updateCheckEnabled = MutableStateFlow(settings.updateCheckEnabled)
+    val updateCheckEnabled: StateFlow<Boolean> = _updateCheckEnabled.asStateFlow()
+
+    private val _availableUpdate = MutableStateFlow<UpdateInfo?>(null)
+    /** Null when there is nothing to show; dismissed state lasts until the next app start. */
+    val availableUpdate: StateFlow<UpdateInfo?> = _availableUpdate.asStateFlow()
+
+    private val _updateChecking = MutableStateFlow(false)
+    val updateChecking: StateFlow<Boolean> = _updateChecking.asStateFlow()
+
+    init {
+        val due = System.currentTimeMillis() - settings.lastCheckMs > DAY_MS
+        if (settings.updateCheckEnabled && due) {
+            viewModelScope.launch { runUpdateCheck(manual = false) }
+        }
+    }
+
+    fun setUpdateCheckEnabled(enabled: Boolean) {
+        settings.updateCheckEnabled = enabled
+        _updateCheckEnabled.value = enabled
+    }
+
+    fun dismissUpdate() {
+        _availableUpdate.value = null
+    }
+
+    /** Ignores the toggle and the 24 h throttle; the result is shown as a snackbar message. */
+    fun checkNow() {
+        if (_updateChecking.value) return
+        viewModelScope.launch { runUpdateCheck(manual = true) }
+    }
+
+    private suspend fun runUpdateCheck(manual: Boolean) {
+        _updateChecking.value = true
+        try {
+            val outcome = UpdateChecker.fetchLatest(currentVersionName())
+            outcome.onSuccess { info ->
+                settings.lastCheckMs = System.currentTimeMillis()
+                _availableUpdate.value = info
+            }
+            if (manual) {
+                val app = getApplication<Application>()
+                val text = outcome.fold(
+                    onSuccess = { info ->
+                        if (info == null) {
+                            app.getString(R.string.update_up_to_date)
+                        } else {
+                            app.getString(R.string.update_available_message, info.version)
+                        }
+                    },
+                    onFailure = { app.getString(R.string.update_check_failed) },
+                )
+                showMessage(text)
+            }
+        } finally {
+            _updateChecking.value = false
+        }
+    }
+
+    private fun currentVersionName(): String = runCatching {
+        val app = getApplication<Application>()
+        app.packageManager
+            .getPackageInfo(app.packageName, PackageManager.PackageInfoFlags.of(0))
+            .versionName
+            .orEmpty()
+    }.getOrDefault("")
 
     fun importFromCxp(activity: Activity) {
         launchBusy("") {

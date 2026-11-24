@@ -12,6 +12,7 @@ CXP Exporter is an open-source Android app that exports passkeys and passwords f
 - **Save** password records into a provider of your choice (for example KeePassDX) through the system dialog.
 - **Export** to an encrypted KeePass 4 database (KDBX), to a CXF JSON file, or to a KeePassXC-compatible CSV file (passwords only).
 - **Clear** all records and raw data from memory at any time.
+- **Updates** — daily check for new releases on GitHub; shows a link to the release page, never installs anything.
 
 ## Requirements
 
@@ -72,11 +73,15 @@ Passkeys have no Save button. The Credential Manager API always creates a new ke
 
 ## Permissions
 
-CXP Exporter requests no Android permissions. In particular, it does not request `INTERNET`.
+CXP Exporter requests one Android permission. It is used only for the daily update check, which can be turned off in Settings.
+
+| Permission | Purpose |
+|---|---|
+| `INTERNET` | Daily update check against api.github.com (can be turned off) |
 
 ## Security
 
-- **No network.** The app has no `INTERNET` permission and sends no telemetry.
+- **One network request.** The only network request is the daily update check: a `GET` to `https://api.github.com` for the latest release metadata. It is on by default and can be turned off in Settings. Nothing about your credentials or you is sent, and there is no telemetry. Only HTTPS is used. Nothing is downloaded or installed automatically.
 - **Memory only.** Records and the raw CXF JSON are kept in memory. Nothing is written to disk unless you start an export.
 - **Screen protection.** `FLAG_SECURE` blocks screenshots and screen recording.
 - **No backup.** `android:allowBackup="false"`, and the data extraction rules exclude all data.
