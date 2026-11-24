@@ -10,7 +10,7 @@ kotlinxCoroutines = "1.10.2"
 junit = "4.13.2"
 credentials = "1.5.0"
 providerevents = "1.0.0-beta01"
-kotpass = "0.12.0"
+kotpass = "0.13.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
