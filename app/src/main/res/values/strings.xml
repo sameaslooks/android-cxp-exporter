@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CXP Exporter</string>
+
+    <!-- Actions -->
+    <string name="action_about">About</string>
+    <string name="action_back">Back</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_import_cxp">Import from Credential Manager</string>
+    <string name="action_open_json">Open CXF JSON file</string>
+    <string name="action_export">Export</string>
+    <string name="action_save">Save</string>
+    <string name="action_select_all">Select all</string>
+    <string name="action_select_none">Select none</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+
+    <!-- Empty state -->
+    <string name="empty_title">No records loaded</string>
+    <string name="empty_text">Import passwords and passkeys from Google Password Manager or another credential exporter, or open a CXF JSON file exported earlier.</string>
+
+    <!-- Records -->
+    <string name="summary">%1$d passkeys, %2$d passwords, %3$d skipped, from %4$s</string>
+    <string name="filter_all">All</string>
+    <string name="filter_passkeys">Passkeys</string>
+    <string name="filter_passwords">Passwords</string>
+    <string name="search_label">Search</string>
+    <string name="kind_passkey">Passkey</string>
+    <string name="kind_password">Password</string>
+    <string name="content_passkey_info">Passkey information</string>
+    <string name="passkey_info_title">Passkey</string>
+    <string name="passkey_info_text">Passkeys cannot be re-registered through Credential Manager because it always creates a new key. Use KDBX export.</string>
+
+    <!-- Export -->
+    <string name="export_kdbx">KDBX 4</string>
+    <string name="export_cxf_json">CXF JSON</string>
+    <string name="export_keepassxc_csv">KeePassXC CSV</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_master_password_title">Master password</string>
+    <string name="dialog_master_password_text">Protects the KDBX file. Remember it, there is no recovery.</string>
+    <string name="label_master_password">Master password</string>
+    <string name="label_confirm_password">Confirm password</string>
+    <string name="error_passwords_mismatch">Passwords do not match</string>
+    <string name="content_toggle_visibility">Show or hide password</string>
+    <string name="dialog_unencrypted_title">Export unencrypted file?</string>
+    <string name="dialog_unencrypted_text">This file is not encrypted. Anyone who can read it sees all passwords. Continue?</string>
+
+    <!-- Messages -->
+    <string name="msg_password_saved">Password saved</string>
+    <string name="msg_save_cancelled">Save cancelled</string>
+    <string name="msg_save_failed">Save failed: %1$s</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_package">Package %1$s</string>
+    <string name="about_author">by Sergei K. · @sameaslooks</string>
+    <string name="about_source_label">Source code</string>
+    <string name="about_repo_display" translatable="false">github.com/sameaslooks/android-cxp-exporter</string>
+    <string name="about_licenses">Open-source licenses</string>
+    <string name="about_signing_label">Signing certificate SHA-256</string>
+    <string name="about_signing_unavailable">unavailable</string>
+    <string name="about_signing_note">Shown for reference only: a modified APK can display any value here. To verify an APK, check it with apksigner before installing.</string>
+    <string name="about_disclaimer">Not affiliated with Google, the FIDO Alliance, KeePassXC or KeePassDX. Trademarks belong to their owners.</string>
+    <string name="about_author_url" translatable="false">https://github.com/sameaslooks</string>
+    <string name="about_repo_url" translatable="false">https://github.com/sameaslooks/android-cxp-exporter</string>
+
+    <!-- Licenses -->
+    <string name="licenses_title">Open-source licenses</string>
+    <string name="licenses_intro">CXP Exporter is licensed under the MIT License. It includes or depends on the following third-party components.</string>
+    <string name="licenses_show">Show license text</string>
+    <string name="licenses_hide">Hide license text</string>
+    <string name="licenses_project_page">Project page</string>
+</resources>
